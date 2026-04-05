@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG Chat Assistant</title>
+    <!-- Simple Bootstrap for nice styling -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { padding-top: 50px; background-color: #f8f9fa; }
+        .chat-container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .answer-box { margin-top: 20px; padding: 15px; background: #e9ecef; border-left: 4px solid #0d6efd; border-radius: 4px; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div class="container chat-container">
+        <h2 class="text-center mb-4">ISO 27001 RAG Assistant</h2>
+        <p class="text-muted text-center">Ask questions about the Information Security Management document.</p>
+        
+        <form method="post" action="/">
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" name="query" placeholder="Ask a question..." value="{{ query if query else '' }}" required>
+                <button class="btn btn-primary" type="submit">Send</button>
+            </div>
+        </form>
+
+        {% if answer %}
+        <div class="answer-box">
+            <strong>Answer:</strong><br>
+            {{ answer }}
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
