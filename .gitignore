@@ -1,4 +1,26 @@
-.venv/
+# Environments
 .env
-uploads/
+.venv/
+venv/
+env/
+
+# Python
 __pycache__/
+*.py[cod]
+*$py.class
+*.so
+dist/
+build/
+*.egg-info/
+
+# Project Specific (Uploads/PDFs)
+uploads/
+*.pdf
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
