@@ -44,7 +44,7 @@ def get_models():
     """Lazily initialize models so the app doesn't time out during startup on Render."""
     global embeddings, llm, question_answer_chain
     if embeddings is None:
-        print("Initializing embedding model and LLM (this happens once)...")
+        # print("Initializing embedding model and LLM (this happens once)...")
         embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
         llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0)
         
@@ -86,7 +86,7 @@ async def handle_upload(request: Request, files: list[UploadFile] = File(...)):
     if not saved_files:
         return {"status": "error", "message": "No valid PDF files uploaded."}
         
-    print(f"Processing {len(saved_files)} file(s)...")
+    # print(f"Processing {len(saved_files)} file(s)...")
     
     # Process all uploaded PDFs
     all_docs = []
@@ -120,7 +120,7 @@ async def handle_form(request: Request, query: str = Form(...)):
          return {"error": "No documents uploaded yet. Please upload PDF(s) first."}
 
     # Invoke the dynamically generated RAG chain
-    print(f"Received query: {query}")
+    # print(f"Received query: {query}")
     response = rag_chain.invoke({"input": query})
     answer = response["answer"]
     
