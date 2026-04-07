@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,13 +8,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: { sans: ['Inter', 'sans-serif'] },
                     colors: {
                         brand: {
                             50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8'
-                        }
+                        },
+                        darkmain: '#212121',
+                        darkside: '#171717'
                     }
                 }
             }
@@ -26,67 +29,76 @@
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #e2e8f0; border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background-color: #cbd5e1; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #52525b; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover { background-color: #71717a; }
         pre { background-color: #f1f5f9; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; margin-top: 0.5rem; margin-bottom: 0.5rem; }
+        .dark pre { background-color: #2d2d2d; color: #e2e8f0; border: 1px solid #404040; }
         code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 0.875em; }
     </style>
 </head>
-<body class="bg-white text-slate-800 antialiased h-screen flex overflow-hidden">
+<body class="bg-white dark:bg-darkmain text-slate-800 dark:text-slate-200 antialiased h-screen flex overflow-hidden transition-colors duration-300">
 
     <!-- Sidebar / Knowledge Base (Similar to ChatGPT history sidebar) -->
-    <aside class="w-full md:w-72 lg:w-80 bg-slate-50 border-r border-slate-200 flex flex-col shrink-0 transition-transform duration-300 z-20 absolute md:relative h-full transform -translate-x-full md:translate-x-0" id="sidebar">
-        <div class="p-4 border-b border-slate-200 flex items-center justify-between">
+    <aside class="w-full md:w-72 lg:w-80 bg-slate-50 dark:bg-darkside border-r border-slate-200 dark:border-white/10 flex flex-col shrink-0 transition-transform duration-300 z-20 absolute md:relative h-full transform -translate-x-full md:translate-x-0" id="sidebar">
+        <div class="p-4 border-b border-slate-200 dark:border-white/10 flex items-center justify-between">
             <div class="flex items-center gap-2">
                 <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-indigo-600 flex items-center justify-center">
                     <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                 </div>
-                <span class="font-bold text-slate-700">DocAssist AI</span>
+                <span class="font-bold text-slate-700 dark:text-slate-200">DocAssist AI</span>
             </div>
-            <button id="closeSidebarBtn" class="md:hidden p-2 text-slate-500 hover:text-slate-700 rounded-lg hover:bg-slate-200">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
+            <div class="flex items-center gap-1">
+                <button id="themeToggleBtn" class="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-lg hover:bg-slate-200 dark:hover:bg-white/10 transition-colors">
+                    <svg id="sunIcon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg id="moonIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+                <button id="closeSidebarBtn" class="md:hidden p-2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-lg hover:bg-slate-200 dark:hover:bg-white/10">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
         </div>
 
         <div class="p-4 flex-grow flex flex-col overflow-y-auto custom-scrollbar">
-            <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 px-2">Knowledge Base</h3>
+            <h3 class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3 px-2">Knowledge Base</h3>
             
             <form id="uploadForm" class="flex flex-col gap-3" method="post" action="/upload" enctype="multipart/form-data">
-                <div id="uploadZone" class="border-2 border-dashed border-slate-300 rounded-xl bg-white p-6 text-center cursor-pointer hover:border-brand-500 hover:bg-brand-50 transition-colors relative group">
+                <div id="uploadZone" class="border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl bg-white dark:bg-darkmain p-6 text-center cursor-pointer hover:border-brand-500 dark:hover:border-brand-500 hover:bg-brand-50 dark:hover:bg-white/5 transition-colors relative group">
                     <input type="file" id="pdfFiles" name="files" accept=".pdf" multiple class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" required>
                     <svg class="w-6 h-6 text-brand-500 mx-auto mb-2 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
-                    <p class="text-sm font-medium text-slate-700">Upload PDFs</p>
-                    <p class="text-xs text-slate-500 mt-1">Drag & drop or browse</p>
+                    <p class="text-sm font-medium text-slate-700 dark:text-slate-300">Upload PDFs</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Drag & drop or browse</p>
                 </div>
-                <div id="fileList" class="text-xs font-medium text-brand-600 px-2 min-h-[1rem]"></div>
-                <button type="submit" id="uploadBtn" class="w-full bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 font-medium py-2 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors disabled:opacity-50 text-sm shadow-sm">
+                <div id="fileList" class="text-xs font-medium text-brand-600 dark:text-brand-400 px-2 min-h-[1rem]"></div>
+                <button type="submit" id="uploadBtn" class="w-full bg-white dark:bg-white/10 border border-slate-200 dark:border-transparent hover:bg-slate-100 dark:hover:bg-white/20 text-slate-700 dark:text-slate-200 font-medium py-2 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors disabled:opacity-50 text-sm shadow-sm">
                     <span>Process Documents</span>
                 </button>
             </form>
 
             <div id="toastContainer" class="mt-4">
                 {% if system_status %}
-                <div class="bg-blue-50 text-blue-800 text-xs font-medium p-3 rounded-xl border border-blue-100">
+                <div class="bg-blue-50 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-xs font-medium p-3 rounded-xl border border-blue-100 dark:border-blue-800/50">
                     {{ system_status }}
                 </div>
                 {% endif %}
             </div>
         </div>
         
-        <div class="p-4 border-t border-slate-200">
+        <div class="p-4 border-t border-slate-200 dark:border-white/10">
             <div class="flex items-center gap-3 px-2">
-                <div class="w-8 h-8 rounded-full bg-brand-100 flex items-center justify-center text-brand-700 font-bold text-sm">U</div>
-                <div class="text-sm font-medium text-slate-700">User Workspace</div>
+                <div class="w-8 h-8 rounded-full bg-brand-100 dark:bg-brand-900/50 flex items-center justify-center text-brand-700 dark:text-brand-300 font-bold text-sm">U</div>
+                <div class="text-sm font-medium text-slate-700 dark:text-slate-300">User Workspace</div>
             </div>
         </div>
     </aside>
 
     <!-- Main Chat Area -->
-    <main class="flex-grow flex flex-col relative w-full h-full bg-white">
+    <main class="flex-grow flex flex-col relative w-full h-full bg-white dark:bg-darkmain transition-colors duration-300">
         <!-- Mobile Header -->
-        <div class="md:hidden shrink-0 border-b border-slate-200 p-3 flex items-center justify-between z-10 bg-white">
-            <button id="openSidebarBtn" class="p-2 -ml-2 text-slate-500 hover:bg-slate-100 rounded-lg">
+        <div class="md:hidden shrink-0 border-b border-slate-200 dark:border-white/10 p-3 flex items-center justify-between z-10 bg-white dark:bg-darkmain">
+            <button id="openSidebarBtn" class="p-2 -ml-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10 rounded-lg">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
             </button>
-            <span class="font-bold text-slate-700">DocAssist AI</span>
+            <span class="font-bold text-slate-700 dark:text-slate-200">DocAssist AI</span>
             <div class="w-8"></div> <!-- Spacer for centering -->
         </div>
 
@@ -95,11 +107,11 @@
             
             <div class="max-w-3xl mx-auto w-full">
                 <div id="emptyState" class="flex flex-col items-center justify-center text-center mt-20 md:mt-32 px-4">
-                    <div class="w-16 h-16 bg-white border border-slate-100 shadow-sm rounded-2xl flex items-center justify-center mb-6">
-                        <svg class="w-8 h-8 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+                    <div class="w-16 h-16 bg-white dark:bg-white/5 border border-slate-100 dark:border-white/10 shadow-sm rounded-2xl flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-brand-500 dark:text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
                     </div>
-                    <h2 class="text-2xl font-semibold text-slate-800 mb-2">How can I help you today?</h2>
-                    <p class="text-slate-500 max-w-md">Upload your PDF documents in the sidebar, and I'll help you extract information, summarize, or answer questions.</p>
+                    <h2 class="text-2xl font-semibold text-slate-800 dark:text-slate-200 mb-2">How can I help you today?</h2>
+                    <p class="text-slate-500 dark:text-slate-400 max-w-md">Upload your PDF documents in the sidebar, and I'll help you extract information, summarize, or answer questions.</p>
                 </div>
             </div>
 
@@ -109,23 +121,23 @@
                 <div class="w-8 h-8 rounded-full bg-brand-600 flex items-center justify-center shrink-0 shadow-sm">
                     <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                 </div>
-                <div class="prose prose-slate prose-sm sm:prose-base text-slate-700 max-w-none pt-1 whitespace-pre-wrap">{{ answer }}</div>
+                <div class="prose prose-slate dark:prose-invert prose-sm sm:prose-base text-slate-700 dark:text-slate-300 max-w-none pt-1 whitespace-pre-wrap">{{ answer }}</div>
             </div>
             {% endif %}
 
         </div>
 
         <!-- Input Area (Fixed at bottom) -->
-        <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-white via-white to-transparent pt-10 pb-6 px-4">
+        <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-white via-white dark:from-darkmain dark:via-darkmain to-transparent pt-10 pb-6 px-4">
             <div class="max-w-3xl mx-auto relative">
                 <form id="chatForm" class="relative" method="post" action="/">
-                    <div class="relative flex items-end shadow-sm border border-slate-300 rounded-[2rem] bg-slate-50 overflow-hidden focus-within:ring-2 focus-within:ring-brand-500/20 focus-within:border-brand-500 transition-all">
-                        <textarea id="queryInput" name="query" rows="1" placeholder="Message DocAssist..." class="w-full py-4 pl-5 pr-14 outline-none text-slate-700 bg-transparent resize-none max-h-32 min-h-[56px] custom-scrollbar" required></textarea>
-                        <button type="submit" id="askBtn" class="absolute right-2 bottom-2 p-2 bg-slate-800 hover:bg-slate-900 text-white rounded-full transition-colors disabled:opacity-50 disabled:bg-slate-300 disabled:cursor-not-allowed flex items-center justify-center w-10 h-10">
+                    <div class="relative flex items-end shadow-sm border border-slate-300 dark:border-white/10 rounded-[2rem] bg-slate-50 dark:bg-white/5 overflow-hidden focus-within:ring-2 focus-within:ring-brand-500/20 focus-within:border-brand-500 dark:focus-within:border-brand-500 transition-all">
+                        <textarea id="queryInput" name="query" rows="1" placeholder="Message DocAssist..." class="w-full py-4 pl-5 pr-14 outline-none text-slate-700 dark:text-slate-200 bg-transparent resize-none max-h-32 min-h-[56px] custom-scrollbar placeholder:text-slate-500 dark:placeholder:text-slate-400" required></textarea>
+                        <button type="submit" id="askBtn" class="absolute right-2 bottom-2 p-2 bg-slate-800 dark:bg-white hover:bg-slate-900 dark:hover:bg-slate-200 text-white dark:text-slate-800 rounded-full transition-colors disabled:opacity-50 disabled:bg-slate-300 dark:disabled:bg-slate-700 disabled:cursor-not-allowed flex items-center justify-center w-10 h-10">
                             <svg class="w-5 h-5 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19V5m-7 7l7-7 7 7"></path></svg>
                         </button>
                     </div>
-                    <div class="text-center mt-2 text-[11px] text-slate-400 font-medium px-4">
+                    <div class="text-center mt-2 text-[11px] text-slate-400 dark:text-slate-500 font-medium px-4">
                         DocAssist can make mistakes. Consider verifying important information.
                     </div>
                 </form>
@@ -134,9 +146,46 @@
     </main>
 
     <!-- Sidebar Overlay for Mobile -->
-    <div id="sidebarOverlay" class="fixed inset-0 bg-slate-900/50 z-10 hidden md:hidden backdrop-blur-sm transition-opacity opacity-0"></div>
+    <div id="sidebarOverlay" class="fixed inset-0 bg-slate-900/50 dark:bg-black/60 z-10 hidden md:hidden backdrop-blur-sm transition-opacity opacity-0"></div>
 
     <script>
+        // Dark Mode Logic
+        const htmlEl = document.documentElement;
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        const sunIcon = document.getElementById('sunIcon');
+        const moonIcon = document.getElementById('moonIcon');
+
+        function updateThemeIcons() {
+            if (htmlEl.classList.contains('dark')) {
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            } else {
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            }
+        }
+
+        // Initialize from local storage if available
+        if (localStorage.theme === 'light') {
+            htmlEl.classList.remove('dark');
+        } else {
+            // Default is dark mode via class on HTML tag
+            htmlEl.classList.add('dark');
+            localStorage.theme = 'dark';
+        }
+        updateThemeIcons();
+
+        themeToggleBtn.addEventListener('click', () => {
+            if (htmlEl.classList.contains('dark')) {
+                htmlEl.classList.remove('dark');
+                localStorage.theme = 'light';
+            } else {
+                htmlEl.classList.add('dark');
+                localStorage.theme = 'dark';
+            }
+            updateThemeIcons();
+        });
+
         // Layout Utilities
         const chatHistory = document.getElementById('chatHistory');
         const emptyState = document.getElementById('emptyState');
@@ -168,7 +217,7 @@
             const msg = document.createElement('div');
             msg.className = 'max-w-3xl mx-auto w-full mb-6 flex justify-end px-2 md:px-0';
             msg.innerHTML = `
-                <div class="bg-slate-100 text-slate-800 px-5 py-3 rounded-3xl max-w-[85%] text-[15px] leading-relaxed whitespace-pre-wrap">${formatText(text)}</div>
+                <div class="bg-slate-100 dark:bg-white/10 text-slate-800 dark:text-slate-100 px-5 py-3 rounded-3xl max-w-[85%] text-[15px] leading-relaxed whitespace-pre-wrap">${formatText(text)}</div>
             `;
             chatHistory.appendChild(msg);
             scrollToBottom();
@@ -178,11 +227,11 @@
             const msg = document.createElement('div');
             msg.className = 'max-w-3xl mx-auto w-full mb-10 flex gap-4 px-2 md:px-0';
             msg.innerHTML = `
-                <div class="w-8 h-8 rounded-full bg-brand-600 flex items-center justify-center shrink-0 shadow-sm border border-brand-500">
+                <div class="w-8 h-8 rounded-full bg-brand-600 flex items-center justify-center shrink-0 shadow-sm border border-brand-500 dark:border-brand-600">
                     <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                 </div>
-                <div class="prose prose-slate prose-sm sm:prose-base text-slate-800 max-w-none pt-1 content-wrapper whitespace-pre-wrap w-full">
-                    ${isThinking ? '<div class="flex items-center gap-1.5 mt-2"><div class="w-2 h-2 bg-slate-300 rounded-full animate-bounce"></div><div class="w-2 h-2 bg-slate-300 rounded-full animate-bounce" style="animation-delay: 0.15s"></div><div class="w-2 h-2 bg-slate-300 rounded-full animate-bounce" style="animation-delay: 0.3s"></div></div>' : ''}
+                <div class="prose prose-slate dark:prose-invert prose-sm sm:prose-base text-slate-800 dark:text-slate-300 max-w-none pt-1 content-wrapper whitespace-pre-wrap w-full">
+                    ${isThinking ? '<div class="flex items-center gap-1.5 mt-2"><div class="w-2 h-2 bg-slate-300 dark:bg-slate-600 rounded-full animate-bounce"></div><div class="w-2 h-2 bg-slate-300 dark:bg-slate-600 rounded-full animate-bounce" style="animation-delay: 0.15s"></div><div class="w-2 h-2 bg-slate-300 dark:bg-slate-600 rounded-full animate-bounce" style="animation-delay: 0.3s"></div></div>' : ''}
                 </div>
             `;
             chatHistory.appendChild(msg);
