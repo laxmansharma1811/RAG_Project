@@ -3,28 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Document Assistant - Extract Insights Instantly</title>
+    <title>DocAssist AI - Configured</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
                     colors: {
-                        primary: '#3b82f6',
-                        'primary-dark': '#1e40af',
-                    },
-                    animation: {
-                        'fade-in': 'fadeIn 0.5s ease-in',
-                        'slide-up': 'slideUp 0.6s ease-out',
-                    },
-                    keyframes: {
-                        fadeIn: {
-                            '0%': { opacity: '0' },
-                            '100%': { opacity: '1' },
-                        },
-                        slideUp: {
-                            '0%': { transform: 'translateY(20px)', opacity: '0' },
-                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        brand: {
+                            50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8'
                         }
                     }
                 }
@@ -32,314 +21,281 @@
         }
     </script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-            min-height: 100vh;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-        }
-
-        .gradient-bg {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-        }
-
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .upload-area {
-            position: relative;
-            transition: all 0.3s ease;
-        }
-
-        .upload-area.drag-over {
-            background-color: #dbeafe;
-            border-color: #3b82f6;
-            transform: scale(1.02);
-        }
-
-        .file-input {
-            position: absolute;
-            opacity: 0;
-            width: 100%;
-            height: 100%;
-            cursor: pointer;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
-        }
-
-        .answer-container {
-            animation: slideUp 0.6s ease-out;
-        }
-
-        .spinner {
-            border: 3px solid rgba(59, 130, 246, 0.1);
-            border-top: 3px solid #3b82f6;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .icon {
-            width: 48px;
-            height: 48px;
-        }
-
-        input:focus {
-            outline: none;
-        }
-
-        .shadow-lg {
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-        }
-
-        @media (max-width: 640px) {
-            .hero-title {
-                font-size: 1.75rem;
-            }
-        }
+        body { font-family: 'Inter', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #e2e8f0; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background-color: #cbd5e1; }
+        pre { background-color: #f1f5f9; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; margin-top: 0.5rem; margin-bottom: 0.5rem; }
+        code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 0.875em; }
     </style>
 </head>
-<body>
-    <!-- Header -->
-    <header class="sticky top-0 z-50 glass-effect border-b border-gray-200">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="gradient-bg w-10 h-10 rounded-lg flex items-center justify-center">
-                        <span class="text-white font-bold text-lg">📄</span>
-                    </div>
-                    <h1 class="text-xl sm:text-2xl font-bold text-gray-900">DocAssist</h1>
+<body class="bg-white text-slate-800 antialiased h-screen flex overflow-hidden">
+
+    <!-- Sidebar / Knowledge Base (Similar to ChatGPT history sidebar) -->
+    <aside class="w-full md:w-72 lg:w-80 bg-slate-50 border-r border-slate-200 flex flex-col shrink-0 transition-transform duration-300 z-20 absolute md:relative h-full transform -translate-x-full md:translate-x-0" id="sidebar">
+        <div class="p-4 border-b border-slate-200 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-indigo-600 flex items-center justify-center">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                 </div>
-                <p class="hidden sm:block text-sm text-gray-600">AI-Powered Document Intelligence</p>
+                <span class="font-bold text-slate-700">DocAssist AI</span>
+            </div>
+            <button id="closeSidebarBtn" class="md:hidden p-2 text-slate-500 hover:text-slate-700 rounded-lg hover:bg-slate-200">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+
+        <div class="p-4 flex-grow flex flex-col overflow-y-auto custom-scrollbar">
+            <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 px-2">Knowledge Base</h3>
+            
+            <form id="uploadForm" class="flex flex-col gap-3" method="post" action="/upload" enctype="multipart/form-data">
+                <div id="uploadZone" class="border-2 border-dashed border-slate-300 rounded-xl bg-white p-6 text-center cursor-pointer hover:border-brand-500 hover:bg-brand-50 transition-colors relative group">
+                    <input type="file" id="pdfFiles" name="files" accept=".pdf" multiple class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" required>
+                    <svg class="w-6 h-6 text-brand-500 mx-auto mb-2 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                    <p class="text-sm font-medium text-slate-700">Upload PDFs</p>
+                    <p class="text-xs text-slate-500 mt-1">Drag & drop or browse</p>
+                </div>
+                <div id="fileList" class="text-xs font-medium text-brand-600 px-2 min-h-[1rem]"></div>
+                <button type="submit" id="uploadBtn" class="w-full bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 font-medium py-2 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors disabled:opacity-50 text-sm shadow-sm">
+                    <span>Process Documents</span>
+                </button>
+            </form>
+
+            <div id="toastContainer" class="mt-4">
+                {% if system_status %}
+                <div class="bg-blue-50 text-blue-800 text-xs font-medium p-3 rounded-xl border border-blue-100">
+                    {{ system_status }}
+                </div>
+                {% endif %}
             </div>
         </div>
-    </header>
+        
+        <div class="p-4 border-t border-slate-200">
+            <div class="flex items-center gap-3 px-2">
+                <div class="w-8 h-8 rounded-full bg-brand-100 flex items-center justify-center text-brand-700 font-bold text-sm">U</div>
+                <div class="text-sm font-medium text-slate-700">User Workspace</div>
+            </div>
+        </div>
+    </aside>
 
-    <!-- Main Content -->
-    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-        <!-- Hero Section -->
-        <section class="mb-12 text-center animate-fade-in">
-            <h2 class="hero-title text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-                Ask Your Documents Anything
-            </h2>
-            <p class="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
-                Upload your PDFs and get instant answers powered by advanced AI. Perfect for research, learning, and productivity.
-            </p>
-        </section>
+    <!-- Main Chat Area -->
+    <main class="flex-grow flex flex-col relative w-full h-full bg-white">
+        <!-- Mobile Header -->
+        <div class="md:hidden shrink-0 border-b border-slate-200 p-3 flex items-center justify-between z-10 bg-white">
+            <button id="openSidebarBtn" class="p-2 -ml-2 text-slate-500 hover:bg-slate-100 rounded-lg">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+            <span class="font-bold text-slate-700">DocAssist AI</span>
+            <div class="w-8"></div> <!-- Spacer for centering -->
+        </div>
 
-        <!-- Main Card -->
-        <div class="bg-white rounded-2xl shadow-lg overflow-hidden animate-slide-up">
-            <!-- Upload Section -->
-            <div class="p-6 sm:p-8 border-b border-gray-100">
-                <div class="mb-6">
-                    <h3 class="text-lg sm:text-xl font-bold text-gray-900 flex items-center gap-2 mb-2">
-                        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-600 font-bold text-sm">1</span>
-                        Upload Documents
-                    </h3>
-                    <p class="text-gray-600 text-sm">Add one or multiple PDF files to begin</p>
-                </div>
-
-                <form id="uploadForm" method="post" action="/upload" enctype="multipart/form-data">
-                    <div class="upload-area border-2 border-dashed border-gray-300 rounded-xl p-8 text-center transition-all duration-300 hover:border-blue-400 hover:bg-blue-50">
-                        <input type="file" id="pdfFiles" name="files" accept=".pdf" multiple class="file-input" required>
-                        
-                        <div class="pointer-events-none">
-                            <div class="text-4xl mb-3">📤</div>
-                            <h4 class="text-lg font-semibold text-gray-900 mb-1">Drag and drop your PDFs</h4>
-                            <p class="text-gray-600 text-sm mb-3">or click to browse from your device</p>
-                            <div id="fileList" class="text-xs text-gray-500 mt-3"></div>
-                        </div>
+        <!-- Chat History -->
+        <div id="chatHistory" class="flex-grow overflow-y-auto custom-scrollbar relative px-4 pt-8 pb-32">
+            
+            <div class="max-w-3xl mx-auto w-full">
+                <div id="emptyState" class="flex flex-col items-center justify-center text-center mt-20 md:mt-32 px-4">
+                    <div class="w-16 h-16 bg-white border border-slate-100 shadow-sm rounded-2xl flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
                     </div>
-
-                    <button type="submit" class="btn-primary w-full mt-6 bg-blue-600 text-white font-semibold py-3 sm:py-4 px-6 rounded-lg hover:bg-blue-700 transition-all duration-300 flex items-center justify-center gap-2">
-                        <span>Process Documents</span>
-                        <span>→</span>
-                    </button>
-                </form>
+                    <h2 class="text-2xl font-semibold text-slate-800 mb-2">How can I help you today?</h2>
+                    <p class="text-slate-500 max-w-md">Upload your PDF documents in the sidebar, and I'll help you extract information, summarize, or answer questions.</p>
+                </div>
             </div>
 
-            <!-- Chat Section -->
-            <div class="p-6 sm:p-8">
-                <h3 class="text-lg sm:text-xl font-bold text-gray-900 flex items-center gap-2 mb-4">
-                    <span class="flex items-center justify-center w-8 h-8 rounded-full bg-green-100 text-green-600 font-bold text-sm">2</span>
-                    Ask Questions
-                </h3>
+            <!-- Server-Side rendered initial answer placeholder if applicable -->
+            {% if answer %}
+            <div class="max-w-3xl mx-auto w-full mb-8 flex gap-4 px-2 md:px-0 mt-8 hidden-initial-answer">
+                <div class="w-8 h-8 rounded-full bg-brand-600 flex items-center justify-center shrink-0 shadow-sm">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                </div>
+                <div class="prose prose-slate prose-sm sm:prose-base text-slate-700 max-w-none pt-1 whitespace-pre-wrap">{{ answer }}</div>
+            </div>
+            {% endif %}
 
-                <form id="chatForm" method="post" action="/">
-                    <div class="relative flex flex-col sm:flex-row gap-3">
-                        <input 
-                            type="text" 
-                            name="query" 
-                            id="queryInput"
-                            placeholder="What would you like to know about your documents?" 
-                            class="flex-1 px-4 sm:px-5 py-3 sm:py-4 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 text-gray-900 placeholder-gray-500"
-                            required
-                        >
-                        <button 
-                            type="submit" 
-                            class="btn-primary bg-blue-600 text-white font-semibold py-3 sm:py-4 px-6 sm:px-8 rounded-lg hover:bg-blue-700 transition-all duration-300 whitespace-nowrap flex items-center justify-center gap-2"
-                        >
-                            <span id="submitText">Send</span>
-                            <span id="submitIcon">✓</span>
+        </div>
+
+        <!-- Input Area (Fixed at bottom) -->
+        <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-white via-white to-transparent pt-10 pb-6 px-4">
+            <div class="max-w-3xl mx-auto relative">
+                <form id="chatForm" class="relative" method="post" action="/">
+                    <div class="relative flex items-end shadow-sm border border-slate-300 rounded-[2rem] bg-slate-50 overflow-hidden focus-within:ring-2 focus-within:ring-brand-500/20 focus-within:border-brand-500 transition-all">
+                        <textarea id="queryInput" name="query" rows="1" placeholder="Message DocAssist..." class="w-full py-4 pl-5 pr-14 outline-none text-slate-700 bg-transparent resize-none max-h-32 min-h-[56px] custom-scrollbar" required></textarea>
+                        <button type="submit" id="askBtn" class="absolute right-2 bottom-2 p-2 bg-slate-800 hover:bg-slate-900 text-white rounded-full transition-colors disabled:opacity-50 disabled:bg-slate-300 disabled:cursor-not-allowed flex items-center justify-center w-10 h-10">
+                            <svg class="w-5 h-5 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19V5m-7 7l7-7 7 7"></path></svg>
                         </button>
                     </div>
+                    <div class="text-center mt-2 text-[11px] text-slate-400 font-medium px-4">
+                        DocAssist can make mistakes. Consider verifying important information.
+                    </div>
                 </form>
             </div>
-
-            <!-- Answer Section -->
-            <div id="answerSection" class="hidden border-t border-gray-100 p-6 sm:p-8">
-                <div class="answer-container">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="flex items-center justify-center w-8 h-8 rounded-full bg-purple-100 text-purple-600">
-                            <span>💡</span>
-                        </div>
-                        <h4 class="text-lg font-bold text-gray-900">Answer</h4>
-                    </div>
-                    <div id="answerContent" class="bg-gradient-to-br from-purple-50 to-blue-50 border border-purple-100 rounded-lg p-6 text-gray-800 leading-relaxed whitespace-pre-wrap break-words max-h-96 overflow-y-auto">
-                    </div>
-                </div>
-            </div>
         </div>
-
-        <!-- Features Section -->
-        <section class="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
-                <div class="text-3xl mb-3">🚀</div>
-                <h4 class="font-bold text-gray-900 mb-2">Fast Processing</h4>
-                <p class="text-sm text-gray-600">Get instant answers from your documents in seconds</p>
-            </div>
-            <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
-                <div class="text-3xl mb-3">🔒</div>
-                <h4 class="font-bold text-gray-900 mb-2">Secure & Private</h4>
-                <p class="text-sm text-gray-600">Your documents stay private and are never shared</p>
-            </div>
-            <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
-                <div class="text-3xl mb-3">⚡</div>
-                <h4 class="font-bold text-gray-900 mb-2">Smart AI</h4>
-                <p class="text-sm text-gray-600">Advanced AI understands context and nuance</p>
-            </div>
-        </section>
     </main>
 
-    <!-- Footer -->
-    <footer class="mt-20 border-t border-gray-200 bg-white">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <p class="text-center text-gray-600 text-sm">
-                Made with ❤️ for better document understanding
-            </p>
-        </div>
-    </footer>
+    <!-- Sidebar Overlay for Mobile -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-slate-900/50 z-10 hidden md:hidden backdrop-blur-sm transition-opacity opacity-0"></div>
 
     <script>
-        // File upload handling
-        const uploadArea = document.querySelector('.upload-area');
-        const fileInput = document.getElementById('pdfFiles');
-        const fileList = document.getElementById('fileList');
-
-        // Drag and drop events
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            uploadArea.addEventListener(eventName, preventDefaults, false);
+        // Layout Utilities
+        const chatHistory = document.getElementById('chatHistory');
+        const emptyState = document.getElementById('emptyState');
+        const queryInput = document.getElementById('queryInput');
+        function scrollToBottom() { chatHistory.scrollTop = chatHistory.scrollHeight; }
+        
+        // Auto-resize textarea
+        queryInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+            if(this.value.trim() === '') { this.style.height = '56px'; }
         });
 
-        function preventDefaults(e) {
-            e.preventDefault();
-            e.stopPropagation();
+        // Submit on Enter (prevent newline on Enter without Shift)
+        queryInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                if(this.value.trim() !== '') document.getElementById('chatForm').dispatchEvent(new Event('submit'));
+            }
+        });
+
+        // Chat UI Helpers
+        function formatText(text) {
+            return text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
         }
 
-        ['dragenter', 'dragover'].forEach(eventName => {
-            uploadArea.addEventListener(eventName, () => {
-                uploadArea.classList.add('drag-over');
-            });
+        function appendUserMessage(text) {
+            if (emptyState) emptyState.style.display = 'none';
+            const msg = document.createElement('div');
+            msg.className = 'max-w-3xl mx-auto w-full mb-6 flex justify-end px-2 md:px-0';
+            msg.innerHTML = `
+                <div class="bg-slate-100 text-slate-800 px-5 py-3 rounded-3xl max-w-[85%] text-[15px] leading-relaxed whitespace-pre-wrap">${formatText(text)}</div>
+            `;
+            chatHistory.appendChild(msg);
+            scrollToBottom();
+        }
+
+        function appendAIMessage(isThinking = false) {
+            const msg = document.createElement('div');
+            msg.className = 'max-w-3xl mx-auto w-full mb-10 flex gap-4 px-2 md:px-0';
+            msg.innerHTML = `
+                <div class="w-8 h-8 rounded-full bg-brand-600 flex items-center justify-center shrink-0 shadow-sm border border-brand-500">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                </div>
+                <div class="prose prose-slate prose-sm sm:prose-base text-slate-800 max-w-none pt-1 content-wrapper whitespace-pre-wrap w-full">
+                    ${isThinking ? '<div class="flex items-center gap-1.5 mt-2"><div class="w-2 h-2 bg-slate-300 rounded-full animate-bounce"></div><div class="w-2 h-2 bg-slate-300 rounded-full animate-bounce" style="animation-delay: 0.15s"></div><div class="w-2 h-2 bg-slate-300 rounded-full animate-bounce" style="animation-delay: 0.3s"></div></div>' : ''}
+                </div>
+            `;
+            chatHistory.appendChild(msg);
+            scrollToBottom();
+            return msg.querySelector('.content-wrapper');
+        }
+
+        // Chat Submission
+        const chatForm = document.getElementById('chatForm');
+        const askBtn = document.getElementById('askBtn');
+        
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const query = queryInput.value.trim();
+            if (!query) return;
+
+            // Reset input
+            queryInput.value = '';
+            queryInput.style.height = '56px';
+            askBtn.disabled = true;
+
+            appendUserMessage(query);
+            const aiContentWrapper = appendAIMessage(true);
+
+            try {
+                const formData = new FormData();
+                formData.append('query', query);
+                const response = await fetch('/chat', { method: 'POST', body: formData });
+                const result = await response.json();
+                
+                if (result.error) {
+                    aiContentWrapper.innerHTML = `<span class="text-red-500">${formatText(result.error)}</span>`;
+                } else {
+                    aiContentWrapper.innerHTML = formatText(result.answer)
+                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                        .replace(/\`(.*?)\`/g, '<code class="bg-slate-100 text-pink-600 px-1 rounded">$1</code>');
+                }
+            } catch (error) {
+                aiContentWrapper.innerHTML = `<span class="text-red-500">Network error. Please try again.</span>`;
+            } finally {
+                askBtn.disabled = false;
+                scrollToBottom();
+            }
         });
 
-        ['dragleave', 'drop'].forEach(eventName => {
-            uploadArea.addEventListener(eventName, () => {
-                uploadArea.classList.remove('drag-over');
-            });
-        });
-
-        uploadArea.addEventListener('drop', (e) => {
-            const dt = e.dataTransfer;
-            const files = dt.files;
-            fileInput.files = files;
-            updateFileList();
-        });
-
-        uploadArea.addEventListener('click', () => {
-            fileInput.click();
-        });
+        // Sidebar Upload Logic
+        const uploadZone = document.getElementById('uploadZone');
+        const fileInput = document.getElementById('pdfFiles');
+        const fileList = document.getElementById('fileList');
+        const uploadForm = document.getElementById('uploadForm');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const toastContainer = document.getElementById('toastContainer');
 
         fileInput.addEventListener('change', updateFileList);
-
+        
         function updateFileList() {
-            const files = fileInput.files;
-            if (files.length > 0) {
-                let fileText = `<span class="text-blue-600 font-semibold">${files.length} file${files.length > 1 ? 's' : ''} selected:</span> `;
-                fileText += Array.from(files).map(f => f.name).join(', ');
-                fileList.innerHTML = fileText;
+            if (fileInput.files.length > 0) {
+                const names = Array.from(fileInput.files).map(f => f.name).join(', ');
+                fileList.textContent = `${fileInput.files.length} file(s): ${names}`;
+            } else { fileList.textContent = ''; }
+        }
+
+        function showToast(message, isError) {
+            toastContainer.innerHTML = `
+                <div class="bg-${isError ? 'red' : 'emerald'}-50 text-${isError ? 'red' : 'emerald'}-800 text-xs font-medium p-3 rounded-xl border border-${isError ? 'red' : 'emerald'}-100 flex items-center gap-2">
+                    <span>${message}</span>
+                </div>
+            `;
+            setTimeout(() => toastContainer.innerHTML='', 5000);
+        }
+
+        uploadForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (fileInput.files.length === 0) return;
+            const origHTML = uploadBtn.innerHTML;
+            uploadBtn.innerHTML = `<span>Uploading...</span>`;
+            uploadBtn.disabled = true;
+            try {
+                const response = await fetch('/upload', { method: 'POST', body: new FormData(uploadForm) });
+                const result = await response.json();
+                showToast(result.message || 'Complete', result.status !== 'success');
+                fileInput.value = ''; fileList.textContent = '';
+            } catch (err) { showToast('Upload failed', true); }
+            finally { uploadBtn.innerHTML = origHTML; uploadBtn.disabled = false; }
+        });
+
+        // Mobile Sidebar Controls
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const openSidebarBtn = document.getElementById('openSidebarBtn');
+        const closeSidebarBtn = document.getElementById('closeSidebarBtn');
+
+        function toggleSidebar(show) {
+            if (show) {
+                sidebar.classList.remove('-translate-x-full');
+                sidebarOverlay.classList.remove('hidden');
+                setTimeout(() => sidebarOverlay.classList.remove('opacity-0'), 10);
             } else {
-                fileList.innerHTML = '';
+                sidebar.classList.add('-translate-x-full');
+                sidebarOverlay.classList.add('opacity-0');
+                setTimeout(() => sidebarOverlay.classList.add('hidden'), 300);
             }
         }
 
-        // Chat form handling
-        const chatForm = document.getElementById('chatForm');
-        const answerSection = document.getElementById('answerSection');
-        const answerContent = document.getElementById('answerContent');
-        const submitText = document.getElementById('submitText');
-        const submitIcon = document.getElementById('submitIcon');
+        openSidebarBtn.addEventListener('click', () => toggleSidebar(true));
+        closeSidebarBtn.addEventListener('click', () => toggleSidebar(false));
+        sidebarOverlay.addEventListener('click', () => toggleSidebar(false));
 
-        chatForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            const query = document.getElementById('queryInput').value;
-            if (!query.trim()) return;
-
-            // Show loading state
-            submitText.textContent = 'Thinking...';
-            submitIcon.innerHTML = '<span class="spinner"></span>';
-            answerSection.classList.remove('hidden');
-            answerContent.innerHTML = '<div class="flex items-center gap-2"><span class="spinner"></span><span>Processing your question...</span></div>';
-
-            // Simulate API call (replace with actual API endpoint)
-            setTimeout(() => {
-                answerContent.innerHTML = `Here would be the answer to: "${query}"<br><br>In a real implementation, this would be connected to your backend API that processes PDFs and generates responses using RAG (Retrieval Augmented Generation).`;
-                submitText.textContent = 'Send';
-                submitIcon.textContent = '✓';
-            }, 1500);
-        });
-
-        // Smooth scroll for features
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href'))?.scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
-        });
+        // Hide SSR initial answers to clear out the default logic if not active
+        if(document.querySelector('.hidden-initial-answer')) {
+            if (emptyState) emptyState.style.display = 'none';
+        }
     </script>
 </body>
 </html>

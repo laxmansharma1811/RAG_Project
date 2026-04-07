@@ -56,7 +56,7 @@ async def read_form(request: Request):
         context={"query": None, "answer": None, "system_status": None}
     )
 
-@app.post("/upload", response_class=HTMLResponse)
+@app.post("/upload")
 async def handle_upload(request: Request, files: list[UploadFile] = File(...)):
     """Handle PDF uploads, process them, and re-create the RAG chain."""
     global rag_chain
@@ -71,11 +71,7 @@ async def handle_upload(request: Request, files: list[UploadFile] = File(...)):
             saved_files.append(file_path)
             
     if not saved_files:
-        return templates.TemplateResponse(
-            request=request, 
-            name="index.html", 
-            context={"query": None, "answer": None, "system_status": "No valid PDF files uploaded."}
-        )
+        return {"status": "error", "message": "No valid PDF files uploaded."}
         
     print(f"Processing {len(saved_files)} file(s)...")
     
@@ -97,38 +93,22 @@ async def handle_upload(request: Request, files: list[UploadFile] = File(...)):
     
     status_msg = f"Successfully processed {len(saved_files)} document(s)! You can now ask questions."
     
-    return templates.TemplateResponse(
-        request=request, 
-        name="index.html", 
-        context={"query": None, "answer": None, "system_status": status_msg}
-    )
+    return {"status": "success", "message": status_msg}
 
-@app.post("/", response_class=HTMLResponse)
+@app.post("/chat")
 async def handle_form(request: Request, query: str = Form(...)):
     """Handle the user's form submission and return the LLM answer."""
     global rag_chain
     
     if rag_chain is None:
-         return templates.TemplateResponse(
-             request=request, 
-             name="index.html", 
-             context={
-                "query": query, 
-                "answer": "No documents uploaded yet. Please upload PDF(s) first.",
-                "system_status": None
-            }
-         )
+         return {"error": "No documents uploaded yet. Please upload PDF(s) first."}
 
     # Invoke the dynamically generated RAG chain
     print(f"Received query: {query}")
     response = rag_chain.invoke({"input": query})
     answer = response["answer"]
     
-    return templates.TemplateResponse(
-        request=request, 
-        name="index.html", 
-        context={"query": query, "answer": answer, "system_status": None}
-    )
+    return {"answer": answer}
 
 if __name__ == "__main__":
     import os
