@@ -1,3 +1,12 @@
+import sys
+try:
+    # Render's default sqlite3 version is too old for ChromaDB
+    # This hot-swaps the system sqlite3 with the newer pysqlite3-binary package
+    __import__('pysqlite3')
+    sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+except ImportError:
+    pass
+
 import os
 import shutil
 from fastapi import FastAPI, Request, Form, UploadFile, File
