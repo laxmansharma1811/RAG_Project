@@ -27,25 +27,29 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 # Global variables for our ML models
 rag_chain = None
+embeddings = None
+llm = None
+question_answer_chain = None
 
-print("Initializing embedding model and LLM (this happens once)...")
-# Initialize embeddings and LLM upfront so we don't have to wait every time someone uploads
-embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0)
-
-system_prompt = (
-    "You are an expert assistant. Use the following pieces of retrieved context to answer "
-    "the question. If you don't know the answer, say that you don't know.\n\n"
-    "{context}"
-)
-
-prompt = ChatPromptTemplate.from_messages([
-    ("system", system_prompt),
-    ("human", "{input}"),
-])
-
-question_answer_chain = create_stuff_documents_chain(llm, prompt)
-
+def get_models():
+    """Lazily initialize models so the app doesn't time out during startup on Render."""
+    global embeddings, llm, question_answer_chain
+    if embeddings is None:
+        print("Initializing embedding model and LLM (this happens once)...")
+        embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+        llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0)
+        
+        system_prompt = (
+            "You are an expert assistant. Use the following pieces of retrieved context to answer "
+            "the question. If you don't know the answer, say that you don't know.\n\n"
+            "{context}"
+        )
+        prompt = ChatPromptTemplate.from_messages([
+            ("system", system_prompt),
+            ("human", "{input}"),
+        ])
+        question_answer_chain = create_stuff_documents_chain(llm, prompt)
+    return embeddings, llm, question_answer_chain
 
 @app.get("/", response_class=HTMLResponse)
 async def read_form(request: Request):
@@ -84,12 +88,15 @@ async def handle_upload(request: Request, files: list[UploadFile] = File(...)):
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
     docs = text_splitter.split_documents(all_docs)
     
+    # Load Models lazily (first request only)
+    emb, _, qa_chain = get_models()
+
     # Update Vector Store
-    vectorstore = Chroma.from_documents(documents=docs, embedding=embeddings)
+    vectorstore = Chroma.from_documents(documents=docs, embedding=emb)
     retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
     
     # Create the new RAG chain for this context
-    rag_chain = create_retrieval_chain(retriever, question_answer_chain)
+    rag_chain = create_retrieval_chain(retriever, qa_chain)
     
     status_msg = f"Successfully processed {len(saved_files)} document(s)! You can now ask questions."
     
